@@ -1,4 +1,6 @@
 using BookingSampleApp_V1.DataAccess;
+using BookingSampleApp_V1.Interfaces;
+using BookingSampleApp_V1.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,7 @@ builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddDbContext<BookingDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
+builder.Services.AddScoped<IBook, BookServiceRepository>();
 
 var app = builder.Build();
 

@@ -7,17 +7,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BookingSampleApp_V1.DataAccess;
 using BookingSampleApp_V1.Models;
+using BookingSampleApp_V1.Interfaces;
 
 namespace BookingSampleApp_V1.Pages.Booking
 {
     public class DeleteModel : PageModel
     {
-        private readonly BookingSampleApp_V1.DataAccess.BookingDbContext _context;
-
-        public DeleteModel(BookingSampleApp_V1.DataAccess.BookingDbContext context)
+        private readonly IBook iBookRepo;
+        public DeleteModel(IBook bookRepos)
         {
-            _context = context;
+            iBookRepo = bookRepos;
         }
+
 
         [BindProperty]
         public Book Book { get; set; } = default!;
@@ -28,17 +29,7 @@ namespace BookingSampleApp_V1.Pages.Booking
             {
                 return NotFound();
             }
-
-            var book = await _context.Book.FirstOrDefaultAsync(m => m.BookId == id);
-
-            if (book == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                Book = book;
-            }
+            Book = await iBookRepo.GetById(id);
             return Page();
         }
 
@@ -48,14 +39,7 @@ namespace BookingSampleApp_V1.Pages.Booking
             {
                 return NotFound();
             }
-
-            var book = await _context.Book.FindAsync(id);
-            if (book != null)
-            {
-                Book = book;
-                _context.Book.Remove(Book);
-                await _context.SaveChangesAsync();
-            }
+            await iBookRepo.Delete(id);
 
             return RedirectToPage("./Index");
         }

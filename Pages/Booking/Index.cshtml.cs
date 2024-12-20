@@ -7,23 +7,23 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BookingSampleApp_V1.DataAccess;
 using BookingSampleApp_V1.Models;
+using BookingSampleApp_V1.Interfaces;
 
 namespace BookingSampleApp_V1.Pages.Booking
 {
     public class IndexModel : PageModel
     {
-        private readonly BookingSampleApp_V1.DataAccess.BookingDbContext _context;
-
-        public IndexModel(BookingSampleApp_V1.DataAccess.BookingDbContext context)
+        private readonly IBook iBookRepo;
+        public IndexModel(IBook bookRepos)
         {
-            _context = context;
+            iBookRepo = bookRepos;
         }
 
         public IList<Book> Book { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Book = await _context.Book.ToListAsync();
+            Book = await iBookRepo.GetAll();
         }
     }
 }

@@ -7,18 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using BookingSampleApp_V1.DataAccess;
 using BookingSampleApp_V1.Models;
+using BookingSampleApp_V1.Interfaces;
 
 namespace BookingSampleApp_V1.Pages.Booking
 {
     public class DetailsModel : PageModel
     {
-        private readonly BookingSampleApp_V1.DataAccess.BookingDbContext _context;
-
-        public DetailsModel(BookingSampleApp_V1.DataAccess.BookingDbContext context)
+        private readonly IBook iBookRepo;
+        public DetailsModel(IBook bookRepos)
         {
-            _context = context;
+            iBookRepo = bookRepos;
         }
-
         public Book Book { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -27,16 +26,7 @@ namespace BookingSampleApp_V1.Pages.Booking
             {
                 return NotFound();
             }
-
-            var book = await _context.Book.FirstOrDefaultAsync(m => m.BookId == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                Book = book;
-            }
+            Book = await iBookRepo.GetById(id);
             return Page();
         }
     }

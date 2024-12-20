@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BookingSampleApp_V1.DataAccess;
 using BookingSampleApp_V1.Models;
+using BookingSampleApp_V1.Interfaces;
 
 namespace BookingSampleApp_V1.Pages.Booking
 {
     public class CreateModel : PageModel
     {
-        private readonly BookingSampleApp_V1.DataAccess.BookingDbContext _context;
-
-        public CreateModel(BookingSampleApp_V1.DataAccess.BookingDbContext context)
+        private readonly IBook iBookRepo;
+        public CreateModel(IBook bookRepos)
         {
-            _context = context;
+            iBookRepo = bookRepos;
         }
 
         public IActionResult OnGet()
@@ -35,9 +35,7 @@ namespace BookingSampleApp_V1.Pages.Booking
                 return Page();
             }
 
-            _context.Book.Add(Book);
-            await _context.SaveChangesAsync();
-
+            await iBookRepo.Add(Book);
             return RedirectToPage("./Index");
         }
     }
